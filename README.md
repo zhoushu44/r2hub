@@ -21,7 +21,7 @@
 ### Docker Compose（推荐）
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/r2hub.git
+git clone https://github.com/zhoushu44/r2hub.git
 cd r2hub
 cp .env.example .env        # 默认管理员密码 zs1236547
 docker compose up -d --build
@@ -36,12 +36,12 @@ docker compose up -d --build
 push 到 main 分支后 GitHub Actions 自动构建推送，直接拉取：
 
 ```bash
-docker pull YOUR_DOCKERHUB/r2hub:latest
+docker pull zhoushu1/r2hub:latest
 
 docker run -d --name r2hub -p 8100:8100 \
   -e ADMIN_TOKEN=zs1236547 \
   -v r2hub-data:/data \
-  YOUR_DOCKERHUB/r2hub:latest
+  zhoushu1/r2hub:latest
 ```
 
 ### 本地裸跑（无 Docker）
@@ -132,7 +132,7 @@ print(p["short_url"])   # 永久短链
 
 ## Docker 镜像发布（CI 自动化）
 
-push 到 `main` 分支 → GitHub Actions 自动：amd64 冒烟测试 → 多架构（amd64+arm64）构建 → 推送 `<DOCKER_HUB_USERNAME>/r2hub:1.0` 和 `:latest` 双标签。
+push 到 `main` 分支 → GitHub Actions 自动：amd64 冒烟测试 → 多架构（amd64+arm64）构建 → 推送 `zhoushu1/r2hub:1.0` 和 `:latest` 双标签。
 
 所需仓库 Secrets：`DOCKER_HUB_USERNAME`、`DOCKER_HUB_TOKEN`（Docker Hub Access Token）。发新版本只需修改 workflow 中 `VERSION:` 一行再 push。master 分支 push 仅构建验证不推送。
 

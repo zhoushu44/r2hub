@@ -17,7 +17,7 @@ EXPOSE 8100
 
 LABEL org.opencontainers.image.title="R2 Hub" \
       org.opencontainers.image.description="多账号 Cloudflare R2 聚合图床" \
-      org.opencontainers.image.source="https://github.com/YOUR_GITHUB_USERNAME/r2hub"
+      org.opencontainers.image.source="https://github.com/zhoushu44/r2hub"
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD ["python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8100/health',timeout=3)"]
