@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 运行数据与密钥
+data/
+data-dockertest/
+.env
+.env.local
+
+# 日志与临时产物
+server.log
+server.err.log
+stress_result.json
+ultra_result.json
+downloaded.png
+test.png
+big.bin

@@ -1,0 +1,43 @@
+services:
+  r2hub:
+    build: .
+    container_name: r2hub
+    ports:
+      - "${PORT:-8100}:8100"
+    environment:
+      - ADMIN_TOKEN=${ADMIN_TOKEN:?请在 .env 中设置 ADMIN_TOKEN}
+      - MAX_UPLOAD_MB=${MAX_UPLOAD_MB:-50}
+      - MAX_BUCKET_GB=${MAX_BUCKET_GB:-9.5}
+      - UNHEALTHY_FAILS=${UNHEALTHY_FAILS:-5}
+      - CHECK_INTERVAL_MIN=${CHECK_INTERVAL_MIN:-60}
+      - THREADPOOL_TOKENS=${THREADPOOL_TOKENS:-100}
+      - WORKERS=${WORKERS:-2}
+      # 默认使用内置 PostgreSQL；如需改回 SQLite，设 DATABASE_URL 为空并删掉 postgres 服务
+      - DATABASE_URL=${DATABASE_URL:-postgresql://r2hub:${PG_PASSWORD:-r2hub_change_me}@postgres:5432/r2hub}
+      - PORT=8100
+      - DB_PATH=/data/r2hub.db
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: r2hub-pg
+    environment:
+      - POSTGRES_USER=r2hub
+      - POSTGRES_PASSWORD=${PG_PASSWORD:-r2hub_change_me}
+      - POSTGRES_DB=r2hub
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U r2hub"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pg-data:

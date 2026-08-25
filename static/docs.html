@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f6821f'/%3E%3Ctext x='16' y='22' font-size='16' font-weight='800' text-anchor='middle' fill='%23111'%3ER2%3C/text%3E%3C/svg%3E">
+<title>R2 Hub API 文档</title>
+<style>
+:root{
+  --bg:#f7f8fa;--bg-side:#ffffff;--card:#ffffff;
+  --border:#e7e9ee;--border-strong:#d7dbe2;
+  --text:#191c22;--dim:#667085;--dimmer:#98a1b0;
+  --brand:#f6821f;--ok:#16a34a;--err:#dc2626;--warn:#b45309;
+  --radius:14px;--code-bg:#f4f5f8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+.side{width:232px;flex-shrink:0;background:var(--bg-side);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 14px}
+.logo{display:flex;align-items:center;gap:10px;padding:6px 10px 22px}
+.logo .mark{width:34px;height:34px;background:linear-gradient(135deg,#fbad41,#f6821f);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#161005;font-size:14px;letter-spacing:-.5px;box-shadow:0 2px 8px rgba(246,130,31,.35)}
+.logo b{font-size:16.5px}.logo small{display:block;color:var(--dimmer);font-size:10.5px;margin-top:-2px}
+.nav{flex:1;display:flex;flex-direction:column;gap:2px}
+.nav .cap{font-size:10.5px;color:var(--dimmer);padding:14px 12px 6px;letter-spacing:1px}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:9px;color:var(--dim);font-size:13.5px;text-decoration:none;transition:.12s;border:1px solid transparent}
+.nav a:hover{color:var(--text);background:#f1f3f6}
+.nav a.on{color:var(--text);background:#eef0f4;border-color:var(--border)}
+.nav a.back{color:var(--brand);font-weight:600}
+.side-foot{padding:14px 12px 4px;border-top:1px solid var(--border);font-size:11px;color:var(--dimmer)}
+
+.main{flex:1;min-width:0;padding:26px 40px 90px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.topbar h1{font-size:19px;font-weight:600;display:flex;align-items:center;gap:10px}
+.tag-pub{font-size:11px;color:var(--ok);background:#dcfce7;padding:2px 10px;border-radius:99px;font-weight:600}
+.sub{color:var(--dim);margin-bottom:26px;font-size:13px}
+
+h2{font-size:16.5px;margin:36px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border);scroll-margin-top:20px}
+h3{font-size:14px;margin:18px 0 8px}
+p{margin:7px 0}
+.muted{color:var(--dim)}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+thead{background:#fafbfc}
+th{color:var(--dimmer);text-align:left;font-weight:500;padding:9px 14px;border-bottom:1px solid var(--border);white-space:nowrap;font-size:12px}
+td{padding:9px 14px;border-bottom:1px solid #f1f3f6;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8f9fb}
+code{background:var(--code-bg);border:1px solid var(--border);padding:1px 7px;border-radius:6px;font-family:Consolas,Menlo,monospace;font-size:12.5px;color:#c2410c}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;padding:16px 18px;overflow-x:auto;margin:12px 0 18px;line-height:1.65}
+pre code{background:none;border:none;padding:0;color:#334155;font-size:12.5px}
+.method{display:inline-block;min-width:50px;text-align:center;padding:1px 0;border-radius:6px;font-weight:700;font-size:11.5px;margin-right:8px;font-family:Consolas,monospace}
+.post{background:#dcfce7;color:#15803d}.get{background:#dbeafe;color:#1d4ed8}.put{background:#fef3c7;color:#92400e}.del{background:#fee2e2;color:#b91c1c}
+.tag{display:inline-block;padding:1px 10px;border-radius:99px;font-size:11px;margin-left:6px;font-weight:600}
+.pub{background:#dcfce7;color:#15803d}.auth{background:#ffedd5;color:#c2410c}
+.note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px 16px;font-size:13px;margin:14px 0}
+.note b{color:#c2410c}
+.pitem{border:1px solid var(--border);background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.pitem b.f{font-size:13px;color:#c2410c;font-family:Consolas,monospace}
+.pitem .step{font-size:13px;margin-top:5px;line-height:1.75}
+.pitem .lnk{margin-top:7px}
+.pitem a{font-size:12.5px}
+
+@media(max-width:920px){
+  body{flex-direction:column}
+  .side{width:100%;height:auto;position:relative;flex-direction:row;align-items:center;padding:10px 14px;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border)}
+  .logo{padding:0 10px 0 0}.logo small{display:none}
+  .nav{flex-direction:row}.nav .cap,.side-foot{display:none}
+  .nav a{white-space:nowrap}.nav a span.lbl{display:none}
+  .main{padding:18px 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<nav class="side">
+  <div class="logo"><span class="mark">R2</span><div><b>R2 Hub</b><small>API 文档</small></div></div>
+  <div class="nav">
+    <a class="back" href="/"><i class="ic">←</i><span class="lbl">返回控制台</span></a>
+    <div class="cap">快速上手</div>
+    <a href="#cf-setup"><span class="lbl">新号接入 6 步清单</span></a>
+    <a href="#params"><span class="lbl">参数获取教程</span></a>
+    <a href="#auth"><span class="lbl">鉴权方式</span></a>
+    <div class="cap">接口</div>
+    <a href="#api"><span class="lbl">接口总览</span></a>
+    <a href="#upload"><span class="lbl">直接上传</span></a>
+    <a href="#presign"><span class="lbl">预签名直传</span></a>
+    <a href="#links"><span class="lbl">图片链接说明</span></a>
+    <a href="#errors"><span class="lbl">错误码</span></a>
+    <div class="cap">工具</div>
+    <a href="#picgo"><span class="lbl">PicGo 配置</span></a>
+  </div>
+  <div class="side-foot">公开页面 · 无需登录<br>可直接分享本链接</div>
+</nav>
+
+<div class="main">
+<div class="topbar">
+  <h1>API 文档 <span class="tag-pub">公开页面 无需登录</span></h1>
+</div>
+<div class="sub">多账号 Cloudflare R2 聚合图床 · 上传 / 直链 / 管理 · 统一短链 · 轮询分发</div>
+
+<h2 id="cf-setup">新号接入：Cloudflare 侧设置（6 步）</h2>
+<table>
+<tr><th style="width:60px">步骤</th><th>操作</th><th>入口</th><th style="width:230px">不做会怎样</th></tr>
+<tr><td>1</td><td>开通 R2 计划（免费）</td><td>控制台左侧 R2</td><td>无法建桶</td></tr>
+<tr><td>2</td><td>绑定支付方式（信用卡/PayPal）</td><td>结算 → 付款方式</td><td>R2 用不了（免费额度内不扣费但必须绑卡）</td></tr>
+<tr><td>3</td><td>创建存储桶</td><td>R2 → 概述 → 创建存储桶</td><td>—</td></tr>
+<tr><td>4</td><td><b>开启公共访问</b></td><td>桶 → 设置 → 公共访问 → 允许访问（r2.dev）</td><td><b style="color:#dc2626">链接全部 404！最常漏的一步</b></td></tr>
+<tr><td>5</td><td>创建 API 令牌（对象读和写）</td><td>R2 → 管理 R2 API 令牌</td><td>平台无法上传</td></tr>
+<tr><td>6</td><td>复制 Account ID + AK + Secret 到本平台</td><td>Secret 只显示一次</td><td>—</td></tr>
+</table>
+<div class="note">📌 <b>建议顺手做：</b>每个账号绑卡后在「结算 → 通知」加预算告警（如 $0.5），超额立刻收邮件；开启两步验证防封号。<br>💡 批量接入用控制台「批量导入」行格式：<code>名称|AccountID|AK|SK|桶名|公开域名</code> 一行一号。</div>
+
+<h2 id="params">❓ 这些参数怎么获取？</h2>
+<p class="muted">全程在 Cloudflare 控制台操作：<a href="https://dash.cloudflare.com/" target="_blank">dash.cloudflare.com ↗</a></p>
+
+<div class="pitem"><b class="f">① Account ID（账号 ID）</b>
+<div class="step">登录 Cloudflare 控制台 → 左侧「R2 对象存储」→ 概述页右侧「帐户详情」面板 → 复制<b>帐户 ID</b>。填入后 endpoint 自动拼好，不用手动填。</div>
+<div class="lnk"><a href="https://dash.cloudflare.com/?to=/:account/r2/overview" target="_blank">打开 R2 概述页 ↗</a></div></div>
+
+<div class="pitem"><b class="f">② Access Key ID / Secret Access Key</b>
+<div class="step">R2 概述页 → 右上角「管理 R2 API 令牌」→「创建 API 令牌」→ 权限选<b>对象读和写</b>，范围选「仅应用于特定桶」并勾选你的桶 → 创建后显示两串值。<b style="color:#dc2626">Secret 只显示这一次，立即复制保存！</b></div>
+<div class="lnk"><a href="https://dash.cloudflare.com/?to=/:account/r2/api-tokens" target="_blank">打开 API 令牌管理 ↗</a></div></div>
+
+<div class="pitem"><b class="f">③ bucket（R2 桶名）</b>
+<div class="step">R2 →「概述」→ 创建存储桶时起的名字。一个账号可建多个桶，每个桶在本平台算一条记录。</div>
+<div class="lnk"><a href="https://dash.cloudflare.com/?to=/:account/r2/overview" target="_blank">查看我的桶列表 ↗</a></div></div>
+
+<div class="pitem"><b class="f">④ 公开访问域名 public_base_url（推荐配置）</b>
+<div class="step">进入你的桶 →「设置」→「公共访问」：方式 A 点<b>允许访问</b>开启 r2.dev 子域，复制形如 <code>https://pub-xxxx.r2.dev</code>；方式 B 绑定自定义域名（需域名托管在同一 CF 账号）。<b style="color:#dc2626">不开公共访问 = 链接全部 404！</b></div>
+<div class="lnk"><a href="https://developers.cloudflare.com/r2/buckets/public-buckets/" target="_blank">官方文档：公共桶设置 ↗</a></div></div>
+
+<div class="pitem"><b class="f">⑤ 名称 label / 自定义 endpoint / Path Style</b>
+<div class="step">label 是自己起的唯一代号（acc01、acc02…），用于轮询分发和短链展示；endpoint 留空自动按 Account ID 拼 R2 地址（只有接 MinIO 才填）；Path Style 保持默认「是」。</div></div>
+
+<h2 id="auth">鉴权方式</h2>
+<p>除标注 <span class="tag pub">公开</span> 的接口外，所有请求需带请求头：</p>
+<pre><code>Authorization: Bearer &lt;你的密钥&gt;</code></pre>
+<table>
+<tr><th>密钥类型</th><th>获取方式</th><th>权限</th></tr>
+<tr><td>API 密钥<br><code>r2h_xxx...</code></td><td>控制台 →「API 密钥」→ 新建（完整值只显示一次）</td><td>上传 / 预签名 / 确认，<b>推荐程序使用</b></td></tr>
+<tr><td>管理员 Token</td><td>部署时 <code>ADMIN_TOKEN</code> 环境变量</td><td>全部接口（含桶管理、巡检）</td></tr>
+</table>
+
+<h2 id="api">接口总览</h2>
+<table>
+<tr><th style="width:200px">接口</th><th>鉴权</th><th>说明</th></tr>
+<tr><td><span class="method get">GET</span><code>/health</code></td><td><span class="tag pub">公开</span></td><td>健康检查</td></tr>
+<tr><td><span class="method post">POST</span><code>/upload</code></td><td><span class="tag auth">API Key</span></td><td>multipart 上传单张图片</td></tr>
+<tr><td><span class="method post">POST</span><code>/api/presign</code></td><td><span class="tag auth">API Key</span></td><td>获取预签名直传地址（推荐）</td></tr>
+<tr><td><span class="method put">PUT</span><code>{upload_url}</code></td><td>签名自带</td><td>直传字节到 Cloudflare</td></tr>
+<tr><td><span class="method post">POST</span><code>/api/presign/confirm</code></td><td><span class="tag auth">API Key</span></td><td>可选：回报真实大小</td></tr>
+<tr><td><span class="method get">GET</span><code>/b/{key}</code></td><td><span class="tag pub">公开</span></td><td>统一短链，302 跳转或代理输出</td></tr>
+<tr><td><span class="method get">GET</span><code>/f/{label}/{key}</code></td><td><span class="tag pub">公开</span></td><td>指定桶的代理下载</td></tr>
+<tr><td><span class="method get">GET</span><code>/api/images</code></td><td><span class="tag auth">管理员</span></td><td>上传记录分页列表</td></tr>
+<tr><td><span class="method del">DEL</span><code>/api/images/{id}</code></td><td><span class="tag auth">管理员</span></td><td>删除记录并删除云端对象</td></tr>
+<tr><td><span class="method post">POST</span><code>/api/buckets/bulk</code></td><td><span class="tag auth">管理员</span></td><td>批量导入桶配置（JSON 数组）</td></tr>
+<tr><td><span class="method post">POST</span><code>/api/buckets/check_all</code></td><td><span class="tag auth">管理员</span></td><td>手动触发全量巡检，死号自动停用</td></tr>
+<tr><td><span class="method get">GET</span><code>/api/keys</code> 等</td><td><span class="tag auth">管理员</span></td><td>API 密钥增删改查（见控制台）</td></tr>
+</table>
+
+<h2 id="upload">方式一：直接上传（简单）</h2>
+<pre><code>curl -X POST http://你的地址:8100/upload \
+  -H "Authorization: Bearer r2h_你的密钥" \
+  -F "file=@cat.jpg"</code></pre>
+<p>响应：</p>
+<pre><code>{
+  "id": 42,
+  "url": "https://pub-xxxx.r2.dev/images/20260825/18f3a1b2c3.jpg",
+  "short_url": "http://你的地址:8100/b/images/20260825/18f3a1b2c3.jpg",
+  "proxied_url": "http://你的地址:8100/f/account01/images/20260825/18f3a1b2c3.jpg",
+  "bucket": "account01",
+  "key": "images/20260825/18f3a1b2c3.jpg",
+  "size": 102400,
+  "filename": "cat.jpg"
+}</code></pre>
+<div class="note">💡 不指定桶时自动在所有启用且未满的桶之间<b>轮询分发</b>；某号临时故障自动换下一个重试。也可 <code>?bucket=acc01</code> 强制指定。</div>
+
+<h2 id="presign">方式二：预签名直传（推荐，省 VPS 流量）</h2>
+<p>图片字节不经过服务器，直接从你的程序进 Cloudflare。</p>
+<pre><code>import requests
+
+BASE = "http://你的地址:8100"
+H = {"Authorization": "Bearer r2h_你的密钥"}
+
+# 第1步：要签名地址
+p = requests.post(f"{BASE}/api/presign", headers=H,
+                  json={"filename": "gen.png", "size": len(img)}).json()
+
+# 第2步：直传 Cloudflare（签名 15 分钟内有效）
+requests.put(p["upload_url"], data=img,
+             headers={"Content-Type": "image/png"})
+
+# 第3步：拿到永久链接
+print(p["short_url"])   # 统一短链
+print(p["url"])         # 最终直链</code></pre>
+<table>
+<tr><th>presign 请求字段</th><th>必填</th><th>说明</th></tr>
+<tr><td>filename</td><td>否</td><td>原始文件名，决定扩展名</td></tr>
+<tr><td>size</td><td>建议传</td><td>文件字节数，用于容量配额预判</td></tr>
+<tr><td>content_type</td><td>否</td><td>如 image/png；传了则 PUT 必须带相同 Content-Type 头</td></tr>
+<tr><td>bucket</td><td>否</td><td>强制指定桶 label；不传走轮询</td></tr>
+</table>
+<div class="note">⚠️ 签名 URL 有效期 900 秒，只能对返回的 key 做一次 PUT。<code>confirm</code> 可选：<code>POST /api/presign/confirm {"key":"...","size":12345}</code></div>
+
+<h2 id="links">图片链接说明</h2>
+<table>
+<tr><th>字段</th><th>形式</th><th>适用</th></tr>
+<tr><td>short_url</td><td>/b/{key}，302 跳转</td><td><b>对外分享首选</b>：统一域名、隐藏真实桶、带浏览器缓存</td></tr>
+<tr><td>url</td><td>桶的公开域名直链</td><td>已知并信任该桶时少一跳</td></tr>
+<tr><td>proxied_url</td><td>/f/{桶}/{key}</td><td>桶未绑定公开域名时的代理通道</td></tr>
+</table>
+
+<h2 id="errors">错误码</h2>
+<table>
+<tr><th style="width:110px">状态码</th><th>含义</th></tr>
+<tr><td>400</td><td>参数缺失 / 没有可用桶</td></tr>
+<tr><td>401</td><td>密钥无效或被停用</td></tr>
+<tr><td>413</td><td>超过 MAX_UPLOAD_MB 上限</td></tr>
+<tr><td>502</td><td>所有候选桶均失败 / 签名生成失败（详情见 detail 字段）</td></tr>
+</table>
+
+<h2 id="picgo">PicGo 自定义图床配置</h2>
+<table>
+<tr><th style="width:150px">项</th><th>值</th></tr>
+<tr><td>API 地址</td><td><code>http://你的地址:8100/upload</code></td></tr>
+<tr><td>POST 参数名</td><td><code>file</code></td></tr>
+<tr><td>JSON 路径</td><td><code>url</code>（想要短链就填 <code>short_url</code>）</td></tr>
+<tr><td>自定义请求头</td><td><code>{"Authorization": "Bearer r2h_你的密钥"}</code></td></tr>
+</table>
+
+<p class="muted" style="margin-top:44px;font-size:12.5px">R2 Hub v1.1 · 单用户多账号 R2 聚合图床 · 轮询分发 / 故障切换 / 容量配额 / 自动巡检</p>
+</div>
+
+<script>
+const navA = document.querySelectorAll('.nav a[href^="#"]');
+function setNavActive(hash){ navA.forEach(a => a.classList.toggle('on', a.getAttribute('href') === hash)); }
+navA.forEach(a => a.addEventListener('click', () => setNavActive(a.getAttribute('href'))));
+const secIds = [...navA].map(a => a.getAttribute('href'));
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (ticking) return; ticking = true;
+  requestAnimationFrame(() => {
+    let current = secIds[0];
+    for (const h of secIds) {
+      const el = document.querySelector(h);
+      if (el && el.getBoundingClientRect().top <= 130) current = h;
+    }
+    if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 40) current = secIds[secIds.length - 1];
+    setNavActive(current);
+    ticking = false;
+  });
+});
+if (location.hash && secIds.includes(location.hash)) setNavActive(location.hash);
+</script>
+</body>
+</html>
